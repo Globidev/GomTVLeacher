@@ -1,6 +1,7 @@
 import requests
 from HTMLParser import HTMLParser
 from time import strptime, strftime
+import GomTv
 
 GOM_BASE_URL = 'http://www.gomtv.net'
 GOM_VOD_URL =  'http://www.gomtv.net/videos/index.gom'
@@ -12,15 +13,6 @@ IS_GOM_VOD_STAT_TAG  = lambda tag, attrs : tag == 'li'  and ('class', 'v_date') 
 IS_GOM_VOD_LIST_TAG  = lambda tag, attrs : tag == 'ul'  and ('id', 'vodList')     in attrs
 
 GOM_VOD_DATE_FORMAT  = '%b. %d, %Y'
-
-class GomVod :
-
-    def __init__(self, name, vodLink) :
-        self.name = name
-        self.vodLink = '%s%s' % (GOM_BASE_URL, vodLink)
-        self.thumbLink = None
-        self.date = None
-        self.sets = list()
 
 class GomVodsHTMLParser(HTMLParser) :
 
@@ -35,13 +27,14 @@ class GomVodsHTMLParser(HTMLParser) :
         attrsDict = dict(attrs)
 
         if IS_GOM_VOD_LINK_TAG(tag, attrs) :
-            name, vodLink = attrsDict['title'], attrsDict['href']
-            gomVod = GomVod(name, vodLink)
+            name = attrsDict['title']
+            vodLink = '%s%s' % (GOM_BASE_URL, attrsDict['href'])
+            gomVod = GomTv.GomTvVod(name.encode('utf-8'), vodLink.encode('utf-8'))
             self.gomVods.append(gomVod)
 
         elif IS_GOM_VOD_THUMB_TAG(tag, attrs) :
-            name, thumbLink = attrsDict['alt'], attrsDict['src']
-            self.gomVods[-1].thumbLink = thumbLink
+            thumbLink = attrsDict['alt'], attrsDict['src']
+            #self.gomVods[-1].thumbLink = thumbLink
 
         elif IS_GOM_VOD_STAT_TAG(tag, attrs) :
             self.canBeDate = True
@@ -59,7 +52,7 @@ class GomVodsHTMLParser(HTMLParser) :
         if self.captureDate :
             try : 
                 date = strptime(data, GOM_VOD_DATE_FORMAT)
-                self.gomVods[-1].date = date
+                self.gomVods[-1].date = strftime('%B %D %Y', date)
             except ValueError:
                 pass
 
@@ -83,14 +76,16 @@ class GomSingleVodHTMLParser(HTMLParser) :
         if self.countSets and tag == 'ul' :
             self.countSets = False
 
-response = requests.get(GOM_VOD_URL)
-html = response.text.replace('class="""', 'class=""') # WTF GOM ...
+def getGomVods() :
+    response = requests.get(GOM_VOD_URL)
+    html = response.text.replace('class="""', 'class=""') # WTF GOM ...
 
-parser = GomVodsHTMLParser()
-parser.feed(html)
+    parser = GomVodsHTMLParser()
+    parser.feed(html)
 
-for vod in parser.gomVods :
+    return parser.gomVods
+
+def setVodInfos(vod) :
     html = requests.get(vod.vodLink)
     parser = GomSingleVodHTMLParser(vod)
     parser.feed(html.text)
-    print vod.name, len(vod.sets)

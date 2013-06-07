@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/GomTVLeacher">
+        <file alias="GOMParser">gomtvvodparser.py</file>
+    </qresource>
+</RCC>
