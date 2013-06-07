@@ -14,17 +14,16 @@ int main(int argc, char *argv[])
     {
         bp::object getVodsFunction = globals["getGomVods"];
         gomVods = bp::call<bp::list>(getVodsFunction.ptr());
-        qDebug() << bp::len(gomVods);
-        bp::stl_input_iterator<GomTvVod> begin(gomVods), end;
-        std::list<GomTvVod> vods(begin, end);
-        for(auto & vod : vods)
-        {
-            qDebug() << vod.name.c_str() << vod.url.c_str() << vod.date.c_str();
-            for(auto & str : vod.sets)
-                qDebug() << str.c_str();
-        }
-
     });
+
+    auto gomVodsList = sequenceToList<GomTvVod>(gomVods);
+    for(auto & vod : gomVodsList)
+    {
+        qDebug() << vod.name.c_str() << vod.url.c_str()
+                 << "getting sets infos...";
+        vod.getInfos();
+        qDebug() << vod.sets.size();
+    }
 
     return app.exec();
 }

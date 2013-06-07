@@ -52,8 +52,8 @@ class GomVodsHTMLParser(HTMLParser) :
         if self.captureDate :
             try : 
                 date = strptime(data, GOM_VOD_DATE_FORMAT)
-                self.gomVods[-1].date = strftime('%B %D %Y', date)
-            except ValueError:
+                self.gomVods[-1].date = strftime('%B %d %Y', date)
+            except ValueError, err:
                 pass
 
 class GomSingleVodHTMLParser(HTMLParser) :
@@ -70,7 +70,7 @@ class GomSingleVodHTMLParser(HTMLParser) :
 
         elif self.countSets and tag == 'a' :
             attrsDict = dict(attrs)
-            self.gomVod.sets.append(attrsDict['title'])
+            self.gomVod.sets.append(attrsDict['title'].encode('utf-8'))
 
     def handle_endtag(self, tag) :
         if self.countSets and tag == 'ul' :
@@ -86,6 +86,6 @@ def getGomVods() :
     return parser.gomVods
 
 def setVodInfos(vod) :
-    html = requests.get(vod.vodLink)
+    html = requests.get(vod.url)
     parser = GomSingleVodHTMLParser(vod)
     parser.feed(html.text)

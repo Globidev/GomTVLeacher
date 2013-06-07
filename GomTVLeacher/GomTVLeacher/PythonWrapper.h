@@ -18,4 +18,11 @@ class PythonWrapper : boost::noncopyable
         bp::object globals_;
 };
 
+template <typename T>
+std::list<T> sequenceToList(const bp::list & sequence)
+{
+    bp::stl_input_iterator<T> begin(sequence), end;
+    return std::list<T>(begin, end);
+}
+
 #endif // PYTHONWRAPPER_H
