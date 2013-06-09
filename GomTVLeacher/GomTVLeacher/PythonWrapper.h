@@ -15,14 +15,15 @@ class PythonWrapper : boost::noncopyable
 
     private :
         PythonWrapper();
+
         bp::object globals_;
 };
 
 template <typename T>
-std::list<T> sequenceToList(const bp::list & sequence)
+std::vector<T> sequenceToList(const bp::list & sequence)
 {
     bp::stl_input_iterator<T> begin(sequence), end;
-    return std::list<T>(begin, end);
+    return std::vector<T>(begin, end);
 }
 
 #endif // PYTHONWRAPPER_H

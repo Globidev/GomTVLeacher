@@ -70,13 +70,13 @@ class GomSingleVodHTMLParser(HTMLParser) :
 
         elif self.countSets and tag == 'a' :
             attrsDict = dict(attrs)
-            self.gomVod.sets.append(attrsDict['title'].encode('utf-8'))
+            self.gomVod.addSet(attrsDict['title'].encode('utf-8'))
 
     def handle_endtag(self, tag) :
         if self.countSets and tag == 'ul' :
             self.countSets = False
 
-def getGomVods() :
+def getGomVods(page = 0) :
     response = requests.get(GOM_VOD_URL)
     html = response.text.replace('class="""', 'class=""') # WTF GOM ...
 

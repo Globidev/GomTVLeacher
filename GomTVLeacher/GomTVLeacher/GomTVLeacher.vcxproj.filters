@@ -53,6 +53,15 @@
     <ClCompile Include="GomTvVod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GomVodTreeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GomVodTreeDelegate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GomVodsTreeItems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -67,10 +76,19 @@
     <ClInclude Include="GomTvVod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GomVodTreeItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gomtvleacher.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GomVodTreeDelegate.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GomVodTreeView.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

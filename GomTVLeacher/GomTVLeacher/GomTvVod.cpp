@@ -4,7 +4,7 @@
 #include "PythonWrapper.h"
 
 GomTvVod::GomTvVod(const std::string & name, const std::string & url)
-    : name(name), url(url) 
+    : name(name), url(url) , hasFetchedInfos(false)
 { }
 
 void GomTvVod::getInfos()
@@ -14,4 +14,11 @@ void GomTvVod::getInfos()
         bp::object setInfoFunc = globals[SET_VOD_INFO_FUNC_NAME];
         setInfoFunc(boost::ref(*this));
     });
+    hasFetchedInfos = true;
+}
+
+void GomTvVod::addSet(const std::string & setName)
+{
+    Set set = std::make_pair(setName, url + "/?set=" + std::to_string(sets.size() + 1));
+    sets.push_back(set);
 }

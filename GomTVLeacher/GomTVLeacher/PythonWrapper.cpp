@@ -22,6 +22,7 @@ PythonWrapper::PythonWrapper()
 
 void PythonWrapper::clean()
 {
+    instance().globals_ = bp::object();
     Py_Finalize();
 }
 
