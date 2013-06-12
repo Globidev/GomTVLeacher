@@ -6,11 +6,13 @@ import GomTv
 GOM_BASE_URL = 'http://www.gomtv.net'
 GOM_VOD_URL =  'http://www.gomtv.net/videos/index.gom'
 
-IS_GOM_VOD_LINK_TAG  = lambda tag, attrs : tag == 'a'   and ('class', 'vod_link') in attrs
-IS_GOM_VOD_THUMB_TAG = lambda tag, attrs : tag == 'img' and ('class', 'v_thumb')  in attrs
-IS_GOM_VOD_STAT_TAG  = lambda tag, attrs : tag == 'li'  and ('class', 'v_date')   in attrs
+IS_GOM_VOD_LINK_TAG     = lambda tag, attrs : tag == 'a'   and ('class', 'vod_link') in attrs
+IS_GOM_VOD_THUMB_TAG    = lambda tag, attrs : tag == 'img' and ('class', 'v_thumb')  in attrs
+IS_GOM_VOD_STAT_TAG     = lambda tag, attrs : tag == 'li'  and ('class', 'v_date')   in attrs
 
-IS_GOM_VOD_LIST_TAG  = lambda tag, attrs : tag == 'ul'  and ('id', 'vodList')     in attrs
+IS_GOM_VOD_LIST_TAG     = lambda tag, attrs : tag == 'ul'  and ('id', 'vodList')     in attrs
+
+IS_GOM_VOD_CATEGORY_TAG = lambda tag, title, attrs : tag == 'a' and ('title', title) in attrs
 
 GOM_VOD_DATE_FORMAT  = '%b. %d, %Y'
 
@@ -22,6 +24,7 @@ class GomVodsHTMLParser(HTMLParser) :
 
         self.canBeDate = False
         self.captureDate = False
+        self.captureCategory = False
 
     def handle_starttag(self, tag, attrs):
         attrsDict = dict(attrs)
@@ -42,6 +45,9 @@ class GomVodsHTMLParser(HTMLParser) :
         elif self.canBeDate and tag == 'strong' :
             self.captureDate = True
 
+        elif self.gomVods and IS_GOM_VOD_CATEGORY_TAG(tag, self.gomVods[-1].name, attrs) :
+            self.captureCategory = True
+
     def handle_endtag(self, tag) :
         if self.canBeDate and tag == 'li' :
             self.canBeDate = False
@@ -55,6 +61,10 @@ class GomVodsHTMLParser(HTMLParser) :
                 self.gomVods[-1].date = strftime('%B %d %Y', date)
             except ValueError, err:
                 pass
+        elif self.captureCategory :
+            category = data.lstrip().rstrip() # Tons of whitespaces on the left ...
+            self.gomVods[-1].category = category.encode('utf-8')
+            self.captureCategory = False
 
 class GomSingleVodHTMLParser(HTMLParser) :
 

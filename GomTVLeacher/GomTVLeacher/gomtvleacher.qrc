@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/GomTVLeacher">
         <file alias="GOMParser">gomtvvodparser.py</file>
+        <file alias="DownloadArrow">DownloadArrow.png</file>
+        <file alias="ErrorCross">ErrorCross.png</file>
+        <file alias="PlayTriangle">PlayTriangle.png</file>
     </qresource>
 </RCC>

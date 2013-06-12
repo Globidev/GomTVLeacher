@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DownloadProcess.cpp" />
     <ClCompile Include="GeneratedFiles\qrc_gomtvleacher.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -99,11 +100,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VodCollectionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DownloadProcess.h" />
     <ClInclude Include="GomTVModule.h" />
     <ClInclude Include="GomTvVod.h" />
     <ClInclude Include="GomVodTreeItems.h" />
+    <ClInclude Include="VodCollectionManager.h" />
     <CustomBuild Include="GomVodTreeDelegate.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Message>

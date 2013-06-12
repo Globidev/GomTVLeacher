@@ -16,7 +16,7 @@ enum GomVodTreeRoles
 };
 
 #define LambdaRole(code) [this]() -> QVariant { code }
-enum VodState { Downloadable, Watchable };
+enum VodState { Downloadable, StartedToDownload, Watchable, Error };
 
 template <class TreeItem>
 struct GomVodTreeItem : public QTreeWidgetItem
@@ -25,12 +25,12 @@ struct GomVodTreeItem : public QTreeWidgetItem
 
     GomVodTreeItem(QTreeWidget * parent = NULL) :
         QTreeWidgetItem(parent),
-        actionButton(new QPushButton)
+        actionButton(new QCommandLinkButton)
     {
         roles[ActionButtonRole]   = LambdaRole( 
             return QVariant::fromValue(actionButton.get()); );
         roles[Qt::BackgroundRole] = LambdaRole(
-            return COLOR_FOR_STATE(state); );
+            return COLOR_FOR_STATE(state_); );
 
         QObject::connect(actionButton.get(), &QPushButton::clicked,
                          [this] { self().onAction(); });
@@ -48,8 +48,24 @@ struct GomVodTreeItem : public QTreeWidgetItem
     }
 
     Roles roles;
-    std::unique_ptr<QPushButton> actionButton;
-    VodState state;
+    std::unique_ptr<QCommandLinkButton> actionButton;
+    VodState state_;
+};
+
+class GomVodTopTreeItem;
+
+class GomVodSubTreeItem : public GomVodTreeItem<GomVodSubTreeItem>
+{
+    public :
+        GomVodSubTreeItem(const GomTvVod::Set &, GomVodTopTreeItem *);
+        void onAction();
+
+    private :
+        inline void changeState(VodState);
+        inline void download();
+
+        GomTvVod::Set set_;
+        GomVodTopTreeItem * parent_;
 };
 
 class GomVodTopTreeItem : public GomVodTreeItem<GomVodTopTreeItem>
@@ -58,27 +74,29 @@ class GomVodTopTreeItem : public GomVodTreeItem<GomVodTopTreeItem>
         GomVodTopTreeItem(const GomTvVod &, QTreeWidget * = NULL);
 
         void fetchChildren();
+        void changeState(VodState);
         void onAction();
 
+        GomTvVod vod() const;
+
     private :
+        inline void addSubset(const GomTvVod::Set &);
+
         GomTvVod vod_;
-};
-
-class GomVodSubTreeItem : public GomVodTreeItem<GomVodSubTreeItem>
-{
-    public :
-        GomVodSubTreeItem(const GomTvVod::Set &, QTreeWidget * = NULL);
-
-        void onAction();
-
-    private :
-        GomTvVod::Set set_;
+        std::vector<GomVodSubTreeItem *> children_;
 };
 
 Constant COLOR_FOR_STATE = [](VodState state) -> QColor
 {
-    return state == Downloadable ?
-        Qt::blue : Qt::transparent;
+    switch(state)
+    {
+        case Downloadable      : return Qt::transparent;
+        case StartedToDownload : return QColor(255, 255, 128, 100);
+        case Watchable         : return QColor(0, 255, 0, 100);
+        case Error             : return QColor(255, 0, 0, 100);
+    }
+
+    return QColor();
 };
 
 #endif // GOMVODTOPTREEITEMS_H

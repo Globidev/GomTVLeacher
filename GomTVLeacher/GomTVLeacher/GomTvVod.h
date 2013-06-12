@@ -11,6 +11,7 @@ struct GomTvVod
     void getInfos();
     void addSet(const std::string &);
 
+    std::string category;
     std::string name;
     std::string url;
     std::string date;

@@ -36,10 +36,11 @@ void GomVodTreeView::addVod(const GomTvVod & vod)
 
 void GomVodTreeView::expandVod(QTreeWidgetItem * item)
 {
+    openPersistentEditor(item);
+
     int index = indexOfTopLevelItem(item);
     topLevelItems_.at(index)->fetchChildren();
 
-    openPersistentEditor(item);
-    for(int i = 0; i < item->childCount(); ++ i)
+    for(int i(0); i < item->childCount(); ++ i)
         openPersistentEditor(item->child(i));
 }

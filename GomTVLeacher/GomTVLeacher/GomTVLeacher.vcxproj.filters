@@ -62,6 +62,12 @@
     <ClCompile Include="GomVodsTreeItems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VodCollectionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DownloadProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -77,6 +83,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GomVodTreeItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VodCollectionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DownloadProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

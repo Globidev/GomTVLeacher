@@ -11,6 +11,7 @@ BOOST_PYTHON_MODULE(GomTv)
         .def_readwrite("name", &GomTvVod::name)
         .def_readwrite("url", &GomTvVod::url)
         .def_readwrite("date", &GomTvVod::date)
+        .def_readwrite("category", &GomTvVod::category)
         .def("addSet", &GomTvVod::addSet)
         ;
 };
