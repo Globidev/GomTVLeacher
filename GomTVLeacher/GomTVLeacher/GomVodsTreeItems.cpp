@@ -3,6 +3,8 @@
 
 #include "VodCollectionManager.h"
 
+#include "MainWindow.h"
+
 GomVodTopTreeItem::GomVodTopTreeItem(const GomTvVod & vod, 
                                      QTreeWidget * parent) :
     GomVodTreeItem<GomVodTopTreeItem>(parent),
@@ -11,7 +13,9 @@ GomVodTopTreeItem::GomVodTopTreeItem(const GomTvVod & vod,
     changeState(Downloadable);
     setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-    roles[Qt::DisplayRole] = LambdaRole( return vod_.name.c_str(); );
+    roles[Qt::DisplayRole] = LambdaRole( 
+        return QString("%1 %2").arg(vod_.category.c_str(), 
+                                      vod_.name.c_str()); );
 }
 
 void GomVodTopTreeItem::fetchChildren()
@@ -48,7 +52,9 @@ void GomVodTopTreeItem::changeState(VodState state)
         case StartedToDownload :
             actionButton->setText("Downloading ...");
             actionButton->setDisabled(true);
-            for(auto & child : children_) child->onAction();
+            for(auto & child : children_) 
+                if(child->state_ == Downloadable)
+                    child->onAction();
             break;
 
         case Watchable :
@@ -83,8 +89,8 @@ void GomVodSubTreeItem::onAction()
     switch(state_)
     {
         case Downloadable :
-            download();
             changeState(StartedToDownload);
+            download();
             break;
 
         case Watchable :
@@ -92,6 +98,7 @@ void GomVodSubTreeItem::onAction()
             break;
 
         case Error :
+            Logger::instance().show();
             changeState(Downloadable);
             break;
     }

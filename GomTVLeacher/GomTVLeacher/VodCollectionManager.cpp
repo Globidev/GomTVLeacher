@@ -1,16 +1,21 @@
 #include "stdafx.h"
 #include "VodCollectionManager.h"
 
-VodCollectionManager::VodCollectionManager() :
-    rootDir_(QDir::home())
+#include "Settings.h"
+
+VodCollectionManager::VodCollectionManager()
 {
     qAddPostRoutine(clean);
-    qDebug() << rootDir_;
 }
 
 void VodCollectionManager::clean()
 {
-
+    for(auto & process : instance().processes_)
+    {
+        process->terminate();
+        process->kill();
+    }
+    instance().processes_.clear();
 }
 
 VodCollectionManager & VodCollectionManager::instance()
@@ -21,9 +26,7 @@ VodCollectionManager & VodCollectionManager::instance()
 
 bool VodCollectionManager::hasSet(const GomTvVod & vod, const GomTvVod::Set & set)
 {
-    auto & self = instance();
-
-    QDir testDir(self.rootDir_);
+    QDir testDir(rootDir());
     if(!testDir.cd(vod.category.c_str())) return false;
     return testDir.exists(VOD_NAME(vod.name, set.first));
 }
@@ -46,17 +49,32 @@ void VodCollectionManager::download(const GomTvVod & vod,
 
 void VodCollectionManager::play(const GomTvVod & vod, const GomTvVod::Set & set)
 {
-    QProcess::startDetached("C:/Program Files (x86)/VideoLAN/VLC/vlc.exe",
-                            QStringList() << 
+    auto mediaPlayerPath = Settings::value(SETTINGS_KEY_MEDIA_PLAYER_PATH,
+                                           SETTINGS_DEFAULT_MEDIA_PLAYER_PATH)
+                                           .toString();
+    QProcess::startDetached(mediaPlayerPath, QStringList() << 
                             QDir::toNativeSeparators(filePathForVod(vod, set)));
+}
+
+bool VodCollectionManager::processesStillRunning()
+{
+    return std::any_of(instance().processes_.begin(), instance().processes_.end(),
+        [](const std::unique_ptr<DownloadProcess> & process) { return process->state() == QProcess::Running; });
 }
 
 QString VodCollectionManager::filePathForVod(const GomTvVod & vod, 
                                              const GomTvVod::Set & set)
 {
-    QDir outputDir(instance().rootDir_);
+    QDir outputDir(rootDir());
     outputDir.mkdir(vod.category.c_str());
     outputDir.cd(vod.category.c_str());
 
     return outputDir.filePath(VOD_NAME(vod.name, set.first));
+}
+
+QDir VodCollectionManager::rootDir()
+{
+    return Settings::value(SETTINGS_KEY_VOD_OUTPUT_PATH,
+                             SETTINGS_DEFAULT_VOD_OUTPUT_PATH)
+                             .toString();
 }

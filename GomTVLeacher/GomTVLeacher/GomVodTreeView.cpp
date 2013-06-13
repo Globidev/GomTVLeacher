@@ -12,16 +12,14 @@ GomVodTreeView::GomVodTreeView(QWidget * parent) : QTreeWidget(parent),
     setHeaderLabel("Vods");
     setAlternatingRowColors(true);
     setItemDelegate(delegate_.get());
-
-    fetchVods();
 }
 
-void GomVodTreeView::fetchVods()
+void GomVodTreeView::fetchVods(int page)
 {
-    PythonWrapper::exec([this](const bp::object & globals)
+    PythonWrapper::exec([=](const bp::object & globals)
     {
         bp::object getVods = globals[GET_VODS_FUNC_NAME];
-        auto pyVods = bp::call<bp::list>(getVods.ptr());
+        auto pyVods = bp::call<bp::list>(getVods.ptr(), std::to_string(page));
         
         for(auto & vod : sequenceToList<GomTvVod>(pyVods)) addVod(vod);
     });

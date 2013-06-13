@@ -86,7 +86,7 @@ class GomSingleVodHTMLParser(HTMLParser) :
         if self.countSets and tag == 'ul' :
             self.countSets = False
 
-def getGomVods(resultPerPage = '30', page = '1', search = None) :
+def getGomVods(page = '1', resultPerPage = '30', search = None) :
     payload = {
         'limit'  : resultPerPage,
         'page'   : page,

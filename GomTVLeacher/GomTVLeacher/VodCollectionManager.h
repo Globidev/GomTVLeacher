@@ -18,13 +18,16 @@ class VodCollectionManager : boost::noncopyable
 
         static void play(const GomTvVod &, const GomTvVod::Set &);
 
+        static bool processesStillRunning();
+
+        static QDir rootDir();
+
     private :
         VodCollectionManager();
 
         static inline QString filePathForVod(const GomTvVod &, 
                                              const GomTvVod::Set &);
 
-        QDir rootDir_;
         std::vector<std::unique_ptr<DownloadProcess>> processes_;
 };
 

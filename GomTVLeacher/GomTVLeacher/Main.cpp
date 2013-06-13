@@ -2,13 +2,13 @@
 
 #include "PythonWrapper.h"
 
-#include "GomVodTreeView.h"
+#include "MainWindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    GomVodTreeView v;
+    MainWindow v;
     v.show();
 
     return app.exec();

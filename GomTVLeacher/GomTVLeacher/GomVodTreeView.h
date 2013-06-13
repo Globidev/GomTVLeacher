@@ -9,7 +9,7 @@ class GomVodTreeView : public QTreeWidget
     public :
         explicit GomVodTreeView(QWidget * = NULL);
 
-        void fetchVods();
+        void fetchVods(int page);
 
     private :
         inline void addVod(const GomTvVod &);
