@@ -86,8 +86,17 @@ class GomSingleVodHTMLParser(HTMLParser) :
         if self.countSets and tag == 'ul' :
             self.countSets = False
 
-def getGomVods(page = 0) :
-    response = requests.get(GOM_VOD_URL)
+def getGomVods(resultPerPage = '30', page = '1', search = None) :
+    payload = {
+        'limit'  : resultPerPage,
+        'page'   : page,
+    }
+
+    if search :
+        payload['search'] = '1'
+        payload['words'] = search
+
+    response = requests.get(GOM_VOD_URL, params = payload)
     html = response.text.replace('class="""', 'class=""') # WTF GOM ...
 
     parser = GomVodsHTMLParser()
