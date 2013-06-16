@@ -91,9 +91,9 @@ Constant COLOR_FOR_STATE = [](VodState state) -> QColor
     switch(state)
     {
         case Downloadable      : return Qt::transparent;
-        case StartedToDownload : return QColor(255, 255, 128, 100);
-        case Watchable         : return QColor(0, 255, 0, 100);
-        case Error             : return QColor(255, 0, 0, 100);
+        case StartedToDownload : return QColor(255, 255, 128, 50);
+        case Watchable         : return QColor(0, 255, 0, 50);
+        case Error             : return QColor(255, 0, 0, 50);
     }
 
     return QColor();

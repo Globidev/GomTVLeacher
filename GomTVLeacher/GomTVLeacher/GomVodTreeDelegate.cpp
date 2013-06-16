@@ -22,7 +22,8 @@ QWidget * GomVodTreeDelegate::createEditor(QWidget * parent,
                                            const QModelIndex & index) const
 {
     auto editor = index.data(ActionButtonRole).value<QPushButton *>();
-    editor->setParent(parent);
+    if(editor)
+        editor->setParent(parent);
     return editor;
 }
 

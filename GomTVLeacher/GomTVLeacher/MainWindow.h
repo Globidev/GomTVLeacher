@@ -46,6 +46,8 @@ class MainWindow : public QMainWindow
         std::unique_ptr<QPushButton> loadMore_;
         std::unique_ptr<GomVodTreeView> treeView_;
 
+        std::unique_ptr<QLineEdit> searchField_;
+
         int page_;
 };
 

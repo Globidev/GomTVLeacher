@@ -69,9 +69,11 @@ MainWindow::MainWindow() : QMainWindow(),
     loadMore_(      new QPushButton("Load more")),
     centralWidget_( new QWidget),
     centralLayout_( new QVBoxLayout(centralWidget_.get())),
+    searchField_(   new QLineEdit(this)),
     page_(1)
 {
     setCentralWidget(centralWidget_.get());
+    centralLayout_->addWidget(searchField_.get());
     centralLayout_->addWidget(treeView_.get());
     centralLayout_->addWidget(loadMore_.get());
 
@@ -89,11 +91,18 @@ MainWindow::MainWindow() : QMainWindow(),
 
     QObject::connect(loadMore_.get(), &QPushButton::clicked, [this]
     {
-        treeView_->fetchVods(page_ ++);
+        treeView_->fetchVods(page_ ++, searchField_->text());
     });
 
-    setMinimumSize(800, 600);
+    setMinimumSize(900, 600);
     treeView_->fetchVods(page_ ++);
+
+    QObject::connect(searchField_.get(), &QLineEdit::returnPressed, [this]
+    {
+        page_ = 1;
+        treeView_->clear();
+        treeView_->fetchVods(page_ ++, searchField_->text());
+    });
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

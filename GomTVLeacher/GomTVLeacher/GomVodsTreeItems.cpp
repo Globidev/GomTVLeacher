@@ -13,9 +13,11 @@ GomVodTopTreeItem::GomVodTopTreeItem(const GomTvVod & vod,
     changeState(Downloadable);
     setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-    roles[Qt::DisplayRole] = LambdaRole( 
-        return QString("%1 %2").arg(vod_.category.c_str(), 
-                                      vod_.name.c_str()); );
+    roles[Qt::DisplayRole] = LambdaRole(
+        auto name = QString("%1 %2").arg(vod_.category.c_str(), 
+                                         vod_.name.c_str());
+        return QString("%1 %2").arg(name,
+                                    QString(vod_.date.c_str()).rightJustified(85 - name.size())); );
 }
 
 void GomVodTopTreeItem::fetchChildren()

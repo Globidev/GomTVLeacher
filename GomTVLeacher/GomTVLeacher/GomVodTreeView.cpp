@@ -10,19 +10,25 @@ GomVodTreeView::GomVodTreeView(QWidget * parent) : QTreeWidget(parent),
                     [this](QTreeWidgetItem * item) { expandVod(item); });
 
     setHeaderLabel("Vods");
-    setAlternatingRowColors(true);
+    setFont(QFont("Consolas"));
     setItemDelegate(delegate_.get());
 }
 
-void GomVodTreeView::fetchVods(int page)
+void GomVodTreeView::fetchVods(int page, const QString & search)
 {
     PythonWrapper::exec([=](const bp::object & globals)
     {
         bp::object getVods = globals[GET_VODS_FUNC_NAME];
-        auto pyVods = bp::call<bp::list>(getVods.ptr(), std::to_string(page));
+        auto pyVods = bp::call<bp::list>(getVods.ptr(), std::to_string(page), search.toStdString());
         
         for(auto & vod : sequenceToList<GomTvVod>(pyVods)) addVod(vod);
     });
+}
+
+void GomVodTreeView::clear()
+{
+    topLevelItems_.clear();
+    QTreeWidget::clear();
 }
 
 void GomVodTreeView::addVod(const GomTvVod & vod)

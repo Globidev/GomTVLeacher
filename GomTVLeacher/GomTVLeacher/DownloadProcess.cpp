@@ -16,8 +16,9 @@ DownloadProcess::DownloadProcess() : QProcess()
     QObject::connect(this, &QProcess::readyReadStandardError, [this]
     {
         QString output = readAllStandardError();
-        Logger::log("stderr : " + output);
-        try { validationCallBack_(output.contains("Written")); }
+        bool writeDebug = output.contains("Written");
+        if(!writeDebug) Logger::log("stderr : " + output);
+        try { validationCallBack_(writeDebug); validationCallBack_ = ValidationCallBack(); }
         catch(const std::bad_function_call &) { }
     });
 
@@ -26,6 +27,13 @@ DownloadProcess::DownloadProcess() : QProcess()
         try { validationCallBack_(false); }
         catch(const std::bad_function_call &) { }
         Logger::log("process error : " + errorString());
+    });
+
+    QObject::connect(this, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this](int code, QProcess::ExitStatus)
+    {
+        try { validationCallBack_(false); }
+        catch(const std::bad_function_call &) { }
+        Logger::log("process ended with code : " + QString::number(code));
     });
 }
 
