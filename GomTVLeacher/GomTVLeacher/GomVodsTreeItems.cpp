@@ -16,8 +16,8 @@ GomVodTopTreeItem::GomVodTopTreeItem(const GomTvVod & vod,
     roles[Qt::DisplayRole] = LambdaRole(
         auto name = QString("%1 %2").arg(vod_.category.c_str(), 
                                          vod_.name.c_str());
-        return QString("%1 %2").arg(name,
-                                    QString(vod_.date.c_str()).rightJustified(85 - name.size())); );
+        auto date = QString(vod_.date.c_str()).rightJustified(85 - name.size());
+        return QString("%1 %2").arg(name, date); );
 }
 
 void GomVodTopTreeItem::fetchChildren()
@@ -41,10 +41,10 @@ void GomVodTopTreeItem::addSubset(const GomTvVod::Set & set)
     children_.push_back(std::move(item));
 }
 
-void GomVodTopTreeItem::changeState(VodState state)
+void GomVodTopTreeItem::changeState(VodState _state)
 {
-    state_ = state;
-    switch(state_)
+    state = _state;
+    switch(state)
     {
         case Downloadable :
             actionButton->setIcon(QIcon(":/GomTVLeacher/DownloadArrow"));
@@ -55,14 +55,18 @@ void GomVodTopTreeItem::changeState(VodState state)
             actionButton->setText("Downloading ...");
             actionButton->setDisabled(true);
             for(auto & child : children_) 
-                if(child->state_ == Downloadable)
+                if(child->state == Downloadable)
                     child->onAction();
             break;
 
         case Watchable :
-            // seems like closePersistentEditor deletes the editor... wtf
-            treeWidget()->closePersistentEditor(this);
-            actionButton.release();
+            if(std::all_of(children_.begin(), children_.end(), 
+            [](GomVodSubTreeItem * item) { return item->state == Watchable; }))
+            {
+                treeWidget()->closePersistentEditor(this);
+                // seems like closePersistentEditor deletes the editor... wtf
+                actionButton.release();
+            }
             break;
     }
 
@@ -71,7 +75,7 @@ void GomVodTopTreeItem::changeState(VodState state)
 
 void GomVodTopTreeItem::onAction()
 {
-    if(state_ == Downloadable)
+    if(state == Downloadable)
         changeState(StartedToDownload);
 }
 
@@ -88,7 +92,7 @@ GomVodSubTreeItem::GomVodSubTreeItem(const GomTvVod::Set & set,
 
 void GomVodSubTreeItem::onAction()
 {
-    switch(state_)
+    switch(state)
     {
         case Downloadable :
             changeState(StartedToDownload);
@@ -106,10 +110,10 @@ void GomVodSubTreeItem::onAction()
     }
 }
 
-void GomVodSubTreeItem::changeState(VodState state)
+void GomVodSubTreeItem::changeState(VodState _state)
 {
-    state_ = state;
-    switch(state_)
+    state = _state;
+    switch(state)
     {
         case Downloadable :
             actionButton->setIcon(QIcon(":/GomTVLeacher/DownloadArrow"));

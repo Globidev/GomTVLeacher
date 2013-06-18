@@ -30,7 +30,7 @@ struct GomVodTreeItem : public QTreeWidgetItem
         roles[ActionButtonRole]   = LambdaRole( 
             return QVariant::fromValue(actionButton.get()); );
         roles[Qt::BackgroundRole] = LambdaRole(
-            return COLOR_FOR_STATE(state_); );
+            return COLOR_FOR_STATE(state); );
 
         QObject::connect(actionButton.get(), &QPushButton::clicked,
                          [this] { self().onAction(); });
@@ -49,7 +49,7 @@ struct GomVodTreeItem : public QTreeWidgetItem
 
     Roles roles;
     std::unique_ptr<QCommandLinkButton> actionButton;
-    VodState state_;
+    VodState state;
 };
 
 class GomVodTopTreeItem;

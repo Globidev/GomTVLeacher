@@ -59,7 +59,10 @@ void VodCollectionManager::play(const GomTvVod & vod, const GomTvVod::Set & set)
 bool VodCollectionManager::processesStillRunning()
 {
     return std::any_of(instance().processes_.begin(), instance().processes_.end(),
-        [](const std::unique_ptr<DownloadProcess> & process) { return process->state() == QProcess::Running; });
+        [](const std::unique_ptr<DownloadProcess> & process) 
+        { 
+            return process->state() == QProcess::Running; 
+        });
 }
 
 QString VodCollectionManager::filePathForVod(const GomTvVod & vod, 
@@ -75,6 +78,6 @@ QString VodCollectionManager::filePathForVod(const GomTvVod & vod,
 QDir VodCollectionManager::rootDir()
 {
     return Settings::value(SETTINGS_KEY_VOD_OUTPUT_PATH,
-                             SETTINGS_DEFAULT_VOD_OUTPUT_PATH)
-                             .toString();
+                           SETTINGS_DEFAULT_VOD_OUTPUT_PATH)
+                           .toString();
 }

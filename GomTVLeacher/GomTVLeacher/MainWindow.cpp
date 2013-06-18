@@ -43,11 +43,6 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog(parent)
     });
 }
 
-Logger::Logger() : QTextBrowser()
-{
-
-}
-
 Logger & Logger::instance()
 {
     static Logger logger;
@@ -60,48 +55,30 @@ void Logger::log(const QString & text)
 }
 
 MainWindow::MainWindow() : QMainWindow(),
-    treeView_(      new GomVodTreeView(this)),
-    optionMenu_(    new QMenu("Options", this)),
-    optionAction_(  new QAction("options", optionMenu_.get())), 
-    optionDialog_(  new OptionDialog(this)),
-    loggerMenu_(    new QMenu("Logs", this)),
-    loggerAction_(  new QAction("logs", loggerMenu_.get())),
-    loadMore_(      new QPushButton("Load more")),
-    centralWidget_( new QWidget),
-    centralLayout_( new QVBoxLayout(centralWidget_.get())),
-    searchField_(   new QLineEdit(this)),
     page_(1)
 {
-    setCentralWidget(centralWidget_.get());
-    centralLayout_->addWidget(searchField_.get());
-    centralLayout_->addWidget(treeView_.get());
-    centralLayout_->addWidget(loadMore_.get());
+    ui.setupUi(this);
+    ui.verticalLayout->insertWidget(1, &treeView_);
 
-    menuBar()->addMenu(optionMenu_.get());
-    optionMenu_->addAction(optionAction_.get());
+    QObject::connect(ui.actionOptions, &QAction::triggered,
+                     &optionDialog_, &QDialog::exec);
 
-    QObject::connect(optionAction_.get(), &QAction::triggered,
-                     optionDialog_.get(), &QDialog::exec);
-
-    menuBar()->addMenu(loggerMenu_.get());
-    loggerMenu_->addAction(loggerAction_.get());
-
-    QObject::connect(loggerAction_.get(), &QAction::triggered,
+    QObject::connect(ui.actionLogs, &QAction::triggered,
                      &Logger::instance(), &QWidget::show);
 
-    QObject::connect(loadMore_.get(), &QPushButton::clicked, [this]
+    QObject::connect(ui.loadMore, &QPushButton::clicked, [this]
     {
-        treeView_->fetchVods(page_ ++, searchField_->text());
+        treeView_.fetchVods(page_ ++, ui.searchField->text());
     });
 
     setMinimumSize(900, 600);
-    treeView_->fetchVods(page_ ++);
+    treeView_.fetchVods(page_ ++);
 
-    QObject::connect(searchField_.get(), &QLineEdit::returnPressed, [this]
+    QObject::connect(ui.searchField, &QLineEdit::returnPressed, [this]
     {
         page_ = 1;
-        treeView_->clear();
-        treeView_->fetchVods(page_ ++, searchField_->text());
+        treeView_.clear();
+        treeView_.fetchVods(page_ ++, ui.searchField->text());
     });
 }
 

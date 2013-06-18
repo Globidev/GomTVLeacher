@@ -106,6 +106,9 @@
     <ClInclude Include="GeneratedFiles\ui_SettingsDialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MainWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gomtvleacher.qrc">
@@ -118,6 +121,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="SettingsDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MainWindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>

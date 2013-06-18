@@ -5,7 +5,8 @@
 
 #include "MainWindow.h"
 
-DownloadProcess::DownloadProcess() : QProcess()
+DownloadProcess::DownloadProcess() : QProcess(),
+    hasValidated_(false)
 {
     QObject::connect(this, &QProcess::readyReadStandardOutput, [this]
     {
@@ -16,23 +17,20 @@ DownloadProcess::DownloadProcess() : QProcess()
     QObject::connect(this, &QProcess::readyReadStandardError, [this]
     {
         QString output = readAllStandardError();
-        bool writeDebug = output.contains("Written");
-        if(!writeDebug) Logger::log("stderr : " + output);
-        try { validationCallBack_(writeDebug); validationCallBack_ = ValidationCallBack(); }
-        catch(const std::bad_function_call &) { }
+        bool bytewrittenDebug = output.contains("Written");
+        if(!bytewrittenDebug) Logger::log("stderr : " + output);
+        validate(bytewrittenDebug);
     });
 
-    QObject::connect(this, static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [this]
+    QObject::connect(this, static_cast<ProcessErrorSignal>(&QProcess::error), [this]
     {
-        try { validationCallBack_(false); }
-        catch(const std::bad_function_call &) { }
+        validate(false);
         Logger::log("process error : " + errorString());
     });
 
     QObject::connect(this, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this](int code, QProcess::ExitStatus)
     {
-        try { validationCallBack_(false); }
-        catch(const std::bad_function_call &) { }
+        if(!hasValidated_) validate(false);
         Logger::log("process ended with code : " + QString::number(code));
     });
 }
@@ -40,6 +38,17 @@ DownloadProcess::DownloadProcess() : QProcess()
 void DownloadProcess::setOnValidated(const ValidationCallBack & callBack)
 {
     validationCallBack_ = callBack;
+}
+
+void DownloadProcess::validate(bool valid)
+{
+    if(valid) hasValidated_ = true;
+
+    try
+    { 
+        validationCallBack_(valid); 
+    }
+    catch(const std::bad_function_call &) { }
 }
 
 void DownloadProcess::start(const QString & url, const QString & fileName)
