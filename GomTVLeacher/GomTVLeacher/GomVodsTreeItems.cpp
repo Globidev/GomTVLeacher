@@ -34,6 +34,11 @@ GomTvVod GomVodTopTreeItem::vod() const
     return vod_;
 }
 
+std::vector<GomVodSubTreeItem *> GomVodTopTreeItem::children() const
+{
+    return children_;
+}
+
 void GomVodTopTreeItem::addSubset(const GomTvVod::Set & set)
 {
     GomVodSubTreeItem * item = new GomVodSubTreeItem(set, this);
@@ -82,12 +87,13 @@ void GomVodTopTreeItem::onAction()
 GomVodSubTreeItem::GomVodSubTreeItem(const GomTvVod::Set & set, 
                                      GomVodTopTreeItem * parent) :
     GomVodTreeItem<GomVodSubTreeItem>(), 
-    set_(set), parent_(parent)
+    set_(set), parent_(parent), areSpoilersShown_(false)
 {
 
     changeState(VodCollectionManager::hasSet(parent->vod(), set_) ? Watchable : Downloadable);
 
     roles[Qt::DisplayRole] = LambdaRole( return set_.first.c_str(); );
+    roles[NoSpoilRole] = LambdaRole( return !areSpoilersShown_; );
 }
 
 void GomVodSubTreeItem::onAction()
@@ -108,6 +114,12 @@ void GomVodSubTreeItem::onAction()
             changeState(Downloadable);
             break;
     }
+}
+
+void GomVodSubTreeItem::setSpoilerShown(bool shown)
+{
+    areSpoilersShown_ = shown;
+    emitDataChanged();
 }
 
 void GomVodSubTreeItem::changeState(VodState _state)

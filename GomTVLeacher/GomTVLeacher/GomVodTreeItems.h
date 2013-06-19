@@ -12,7 +12,8 @@ class GomVodItemButton : public QPushButton
 
 enum GomVodTreeRoles
 {
-    ActionButtonRole = Qt::UserRole + 1
+    ActionButtonRole = Qt::UserRole + 1,
+    NoSpoilRole
 };
 
 #define LambdaRole(code) [this]() -> QVariant { code }
@@ -60,12 +61,15 @@ class GomVodSubTreeItem : public GomVodTreeItem<GomVodSubTreeItem>
         GomVodSubTreeItem(const GomTvVod::Set &, GomVodTopTreeItem *);
         void onAction();
 
+        void setSpoilerShown(bool);
+
     private :
         inline void changeState(VodState);
         inline void download();
 
         GomTvVod::Set set_;
         GomVodTopTreeItem * parent_;
+        bool areSpoilersShown_;
 };
 
 class GomVodTopTreeItem : public GomVodTreeItem<GomVodTopTreeItem>
@@ -78,6 +82,7 @@ class GomVodTopTreeItem : public GomVodTreeItem<GomVodTopTreeItem>
         void onAction();
 
         GomTvVod vod() const;
+        std::vector<GomVodSubTreeItem *> children() const;
 
     private :
         inline void addSubset(const GomTvVod::Set &);

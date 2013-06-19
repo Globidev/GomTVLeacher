@@ -8,6 +8,11 @@ void GomVodTreeDelegate::paint(QPainter * painter,
                                const QModelIndex & index) const
 {
     QStyledItemDelegate::paint(painter, option, index);
+    if(index.data(NoSpoilRole).toBool())
+    {
+        QRect r = painter->fontMetrics().boundingRect(option.rect, Qt::AlignVCenter, index.data().toString());
+        painter->fillRect(r.adjusted(0, 0, 10, 0), Qt::yellow);
+    }
 }
 
 QSize GomVodTreeDelegate::sizeHint(const QStyleOptionViewItem & option, 

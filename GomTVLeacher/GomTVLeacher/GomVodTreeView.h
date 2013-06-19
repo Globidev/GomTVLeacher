@@ -12,6 +12,9 @@ class GomVodTreeView : public QTreeWidget
         void fetchVods(int page, const QString & = QString());
         void clear();
 
+    protected :
+        virtual void mouseMoveEvent(QMouseEvent *);
+
     private :
         inline void addVod(const GomTvVod &);
         void expandVod(QTreeWidgetItem *);

@@ -12,6 +12,8 @@ GomVodTreeView::GomVodTreeView(QWidget * parent) : QTreeWidget(parent),
     setHeaderLabel("Vods");
     setFont(QFont("Consolas"));
     setItemDelegate(delegate_.get());
+
+    setMouseTracking(true);
 }
 
 void GomVodTreeView::fetchVods(int page, const QString & search)
@@ -29,6 +31,23 @@ void GomVodTreeView::clear()
 {
     topLevelItems_.clear();
     QTreeWidget::clear();
+}
+
+void GomVodTreeView::mouseMoveEvent(QMouseEvent * event)
+{
+    auto item = itemAt(event->pos());
+    for(auto & topItem : topLevelItems_)
+        for(auto subitem : topItem->children())
+        {
+            bool showSpoilers = subitem == item;
+            if(showSpoilers)
+                showSpoilers &= fontMetrics().boundingRect(
+                    visualItemRect(item), Qt::AlignVCenter, subitem->text(0))
+                        .contains(event->pos());
+            subitem->setSpoilerShown(showSpoilers);
+        }
+
+    QTreeWidget::mouseMoveEvent(event);
 }
 
 void GomVodTreeView::addVod(const GomTvVod & vod)
