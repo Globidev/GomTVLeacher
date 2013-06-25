@@ -11,7 +11,8 @@ void GomVodTreeDelegate::paint(QPainter * painter,
     if(index.data(NoSpoilRole).toBool())
     {
         QRect r = painter->fontMetrics().boundingRect(option.rect, Qt::AlignVCenter, index.data().toString());
-        painter->fillRect(r.adjusted(0, 0, 10, 0), Qt::yellow);
+        r.setWidth(500);
+        painter->fillRect(r, Qt::yellow);
     }
 }
 

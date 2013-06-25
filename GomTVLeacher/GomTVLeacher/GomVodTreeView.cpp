@@ -41,9 +41,13 @@ void GomVodTreeView::mouseMoveEvent(QMouseEvent * event)
         {
             bool showSpoilers = subitem == item;
             if(showSpoilers)
-                showSpoilers &= fontMetrics().boundingRect(
-                    visualItemRect(item), Qt::AlignVCenter, subitem->text(0))
-                        .contains(event->pos());
+            {
+                auto rect = fontMetrics().boundingRect(
+                    visualItemRect(item), Qt::AlignVCenter, subitem->text(0));
+                rect.setWidth(500);
+                showSpoilers &= rect.contains(event->pos());
+            }
+                
             subitem->setSpoilerShown(showSpoilers);
         }
 
