@@ -52,8 +52,9 @@ void VodCollectionManager::play(const GomTvVod & vod, const GomTvVod::Set & set)
     auto mediaPlayerPath = Settings::value(SETTINGS_KEY_MEDIA_PLAYER_PATH,
                                            SETTINGS_DEFAULT_MEDIA_PLAYER_PATH)
                                            .toString();
-    QProcess::startDetached(mediaPlayerPath, QStringList() << 
-                            QDir::toNativeSeparators(filePathForVod(vod, set)));
+    QProcess::startDetached(mediaPlayerPath, QStringList() << "--one-instance" 
+                                                           << "--playlist-enqueue" 
+                                                           << QDir::toNativeSeparators(filePathForVod(vod, set)));
 }
 
 bool VodCollectionManager::processesStillRunning()
@@ -80,4 +81,10 @@ QDir VodCollectionManager::rootDir()
     return Settings::value(SETTINGS_KEY_VOD_OUTPUT_PATH,
                            SETTINGS_DEFAULT_VOD_OUTPUT_PATH)
                            .toString();
+}
+
+void VodCollectionManager::clearProcessesCallbacks()
+{
+    for(auto & process : instance().processes_)
+        process->clearCallback();
 }

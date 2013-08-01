@@ -10,6 +10,7 @@ class DownloadProcess : public QProcess, boost::noncopyable
         DownloadProcess();
 
         void setOnValidated(const ValidationCallBack &);
+        void clearCallback();
         void start(const QString &, const QString &);     
 
         void validate(bool);

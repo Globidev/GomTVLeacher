@@ -2,6 +2,7 @@
 #include "GomVodTreeView.h"
 
 #include "PythonWrapper.h"
+#include "VodCollectionManager.h"
 
 GomVodTreeView::GomVodTreeView(QWidget * parent) : QTreeWidget(parent),
     delegate_(new GomVodTreeDelegate)
@@ -29,6 +30,7 @@ void GomVodTreeView::fetchVods(int page, const QString & search)
 
 void GomVodTreeView::clear()
 {
+    VodCollectionManager::clearProcessesCallbacks();
     topLevelItems_.clear();
     QTreeWidget::clear();
 }

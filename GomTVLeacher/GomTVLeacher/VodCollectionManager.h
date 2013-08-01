@@ -21,6 +21,7 @@ class VodCollectionManager : boost::noncopyable
         static bool processesStillRunning();
 
         static QDir rootDir();
+        static void clearProcessesCallbacks();
 
     private :
         VodCollectionManager();

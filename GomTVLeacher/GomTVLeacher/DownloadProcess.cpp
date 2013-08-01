@@ -40,6 +40,11 @@ void DownloadProcess::setOnValidated(const ValidationCallBack & callBack)
     validationCallBack_ = callBack;
 }
 
+void DownloadProcess::clearCallback()
+{
+    validationCallBack_ = ValidationCallBack();
+}
+
 void DownloadProcess::validate(bool valid)
 {
     if(valid) hasValidated_ = true;

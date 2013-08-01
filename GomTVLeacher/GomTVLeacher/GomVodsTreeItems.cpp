@@ -89,7 +89,6 @@ GomVodSubTreeItem::GomVodSubTreeItem(const GomTvVod::Set & set,
     GomVodTreeItem<GomVodSubTreeItem>(), 
     set_(set), parent_(parent), areSpoilersShown_(false)
 {
-
     changeState(VodCollectionManager::hasSet(parent->vod(), set_) ? Watchable : Downloadable);
 
     roles[Qt::DisplayRole] = LambdaRole( return set_.first.c_str(); );
